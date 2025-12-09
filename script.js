@@ -1,6 +1,6 @@
 // script.js
 // --- CONFIGURATION ---
-// !!! CRITICAL: REPLACE 'YOUR_LIVE_VERCEL_DOMAIN_HERE' with your actual domain !!!
+// PASTE YOUR ACTUAL VERCEL DOMAIN HERE
 const API_BASE_URL = 'https://chat-neon-ten.vercel.app'; 
 // Do NOT include a trailing slash (/)
 
@@ -46,9 +46,8 @@ async function fetchData(endpoint, method = 'GET') {
         const response = await fetch(url, { method: method });
         
         if (!response.ok) {
-            // Handle 404 (Not Found) errors, which is the current issue
             const errorDetails = await response.json().catch(() => ({}));
-            throw new Error(`HTTP Error ${response.status}: Failed to reach API. Check Vercel logs. URL: ${url}`);
+            throw new Error(`HTTP Error ${response.status}: Failed to reach API. URL: ${url}`);
         }
         
         const data = await response.json();
@@ -60,9 +59,8 @@ async function fetchData(endpoint, method = 'GET') {
         return data;
 
     } catch (error) {
-        // If the fetch itself fails (e.g., CORS, network issue)
-        addMessage('bot', `**FATAL ERROR** (Vercel Routing/API): The app failed to fetch data. Error: ${error.message}.`);
-        addMessage('bot', `Please ensure your **vercel.json** routing is correct and the API is healthy.`);
+        addMessage('bot', `**FATAL ERROR** (Data/API): The app failed to fetch data. Error: ${error.message}.`);
+        addMessage('bot', `Please check Vercel Logs for errors related to **Data.csv** loading.`);
         throw error;
     }
 }
