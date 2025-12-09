@@ -1,8 +1,7 @@
 // script.js
 // --- CONFIGURATION ---
-// !!! IMPORTANT: YOU MUST REPLACE THIS PLACEHOLDER WITH YOUR LIVE VERCEL DOMAIN !!!
-// Example: 'https://my-stable-chatbot.vercel.app'
-const API_BASE_URL = 'chat-neon-ten.vercel.app'; 
+// !!! CRITICAL: REPLACE 'YOUR_LIVE_VERCEL_DOMAIN_HERE' with your actual domain !!!
+const API_BASE_URL = 'https://chat-neon-ten.vercel.app'; 
 // Do NOT include a trailing slash (/)
 
 // --- STATE MANAGEMENT ---
@@ -40,38 +39,56 @@ function loadOptions(title, options, clickHandler, type) {
 
 // --- API FETCH LOGIC ---
 
+async function fetchData(endpoint, method = 'GET') {
+    const url = `${API_BASE_URL}${endpoint}`;
+    
+    try {
+        const response = await fetch(url, { method: method });
+        
+        if (!response.ok) {
+            // Handle 404 (Not Found) errors, which is the current issue
+            const errorDetails = await response.json().catch(() => ({}));
+            throw new Error(`HTTP Error ${response.status}: Failed to reach API. Check Vercel logs. URL: ${url}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data && (data.error || data.detail)) {
+             throw new Error(data.error || data.detail);
+        }
+
+        return data;
+
+    } catch (error) {
+        // If the fetch itself fails (e.g., CORS, network issue)
+        addMessage('bot', `**FATAL ERROR** (Vercel Routing/API): The app failed to fetch data. Error: ${error.message}.`);
+        addMessage('bot', `Please ensure your **vercel.json** routing is correct and the API is healthy.`);
+        throw error;
+    }
+}
+
 // 1. Loads the main subject menu
 async function loadMainMenu() {
     currentSubject = null;
-    const url = `${API_BASE_URL}/menu`; // No /api/ needed due to vercel.json routes
     
     try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error || response.status !== 200) throw new Error(data.detail || 'API Error');
-
+        const data = await fetchData('/menu');
         loadOptions('Choose an Option:', data, loadQuestionMenu, 'menu');
     } catch (error) {
-        addMessage('bot', `Error loading menu: Could not connect to API at ${url}`);
+        // Error already logged by fetchData
     }
 }
 
 // 2. Loads the questions for a selected subject
 async function loadQuestionMenu(encodedSubject, subjectText) {
     currentSubject = subjectText;
-    const url = `${API_BASE_URL}/questions/${encodedSubject}`; 
     
     try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error || response.status !== 200) throw new Error(data.detail || 'API Error');
-        
+        const data = await fetchData(`/questions/${encodedSubject}`);
         loadOptions(`Questions for: ${subjectText}`, data, getAnswer, 'questions');
     } catch (error) {
-        addMessage('bot', `Error loading questions: ${error.message}`);
-        loadMainMenu();
+        // Error already logged by fetchData
+        loadMainMenu(); 
     }
 }
 
@@ -79,20 +96,15 @@ async function loadQuestionMenu(encodedSubject, subjectText) {
 async function getAnswer(encodedQuestion, questionText) {
     addMessage('bot', `<strong>Question:</strong> ${questionText}`); 
     
-    const url = `${API_BASE_URL}/answer?question=${encodedQuestion}`;
-    
     try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.error || response.status !== 200) throw new Error(data.detail || 'API Error');
-
-        addMessage('bot', `<strong>Answer:</strong> ${data.answer}`);
+        const data = await fetchData(`/answer?question=${encodedQuestion}`);
         
+        addMessage('bot', `<strong>Answer:</strong> ${data.answer}`);
         addMessage('bot', `✅ Got it! Ready for your next question.`); 
+        
         loadMainMenu();
     } catch (error) {
-        addMessage('bot', `Error fetching answer: ${error.message}`);
+        // Error already logged by fetchData
         loadMainMenu();
     }
 }
