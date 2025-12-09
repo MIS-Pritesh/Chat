@@ -4,25 +4,9 @@
     {
       "src": "api.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "script.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "Data.csv",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/",
-      "dest": "index.html"
-    },
     {
       "src": "/(.*)",
       "dest": "api.py"
