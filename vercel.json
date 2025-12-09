@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(index\\.html|script\\.js|Data\\.csv)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/menu",
+      "dest": "api.py"
+    },
+    {
+      "src": "/questions/(.*)",
+      "dest": "api.py"
+    },
+    {
+      "src": "/answer",
+      "dest": "api.py"
+    },
+    {
+      "src": "/",
+      "dest": "index.html"
+    }
+  ]
+}
