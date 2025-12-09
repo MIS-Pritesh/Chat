@@ -1,4 +1,4 @@
-# api.py
+# index.py
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +17,7 @@ def load_and_structure_data(file_name):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(BASE_DIR, file_name)
     
+    # Check 1: Ensure the file exists (it should now)
     if not os.path.exists(file_path):
         print(f"FATAL ERROR: Data file '{file_name}' not found at {file_path}")
         return {}
@@ -24,6 +25,7 @@ def load_and_structure_data(file_name):
     try:
         df = pd.read_csv(file_path)
         REQUIRED_COLS = ['subject', 'question', 'answer']
+        # Check 2: Ensure required columns are present
         if not all(col in df.columns for col in REQUIRED_COLS):
             print(f"FATAL ERROR: CSV must contain the columns: {', '.join(REQUIRED_COLS)}")
             return {}
@@ -77,7 +79,8 @@ def read_root():
 @app.get("/menu")
 def get_main_menu():
     if 'main_menu' not in GLOBAL_QA_DATA:
-        raise HTTPException(status_code=500, detail="API Data failed to load.")
+        # This will be the error if Data.csv is missing or corrupt
+        raise HTTPException(status_code=500, detail="API Data failed to load. Check index.py logs.")
     return GLOBAL_QA_DATA['main_menu']
 
 @app.get("/questions/{subject}")
