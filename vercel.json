@@ -8,6 +8,14 @@
   ],
   "routes": [
     {
+      "src": "/index.html",
+      "dest": "index.html"
+    },
+    {
+      "src": "/script.js",
+      "dest": "script.js"
+    },
+    {
       "src": "/",
       "dest": "index.html"
     },
