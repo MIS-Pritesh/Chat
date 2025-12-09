@@ -2,7 +2,7 @@
 // --- CONFIGURATION ---
 // !!! IMPORTANT: YOU MUST REPLACE THIS PLACEHOLDER WITH YOUR LIVE VERCEL DOMAIN !!!
 // Example: 'https://my-stable-chatbot.vercel.app'
-const API_BASE_URL = 'YOUR_LIVE_VERCEL_DOMAIN_HERE'; 
+const API_BASE_URL = 'chat-neon-ten.vercel.app'; 
 // Do NOT include a trailing slash (/)
 
 // --- STATE MANAGEMENT ---
